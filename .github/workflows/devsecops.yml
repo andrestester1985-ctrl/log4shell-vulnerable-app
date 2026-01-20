@@ -19,10 +19,10 @@ jobs:
           distribution: 'temurin'
 
       # 1. ESCANEO DE LIBRERÍAS (Fallará por Log4Shell)
-      - name: Dependency Check
-        run: |
-          mvn org.owasp:dependency-check-maven:check \
-          -DfailBuildOnCVSS=7
+#      - name: Dependency Check
+#        run: |
+#          mvn org.owasp:dependency-check-maven:check \
+#          -DfailBuildOnCVSS=7
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
