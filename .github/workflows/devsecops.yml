@@ -34,7 +34,7 @@ jobs:
           # Pasamos el secreto al entorno del runner
           NVD_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
-          ./gradlew build dependencyCheckAnalyze
+          ./gradlew dependencyCheckAnalyze -DnvdApiKey=$NVD_KEY
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry

@@ -5,7 +5,7 @@ plugins {
     // Solo activamos SonarCloud
     id "org.sonarqube" version "3.3"
 	// Plugin de OWASP para el escaneo de dependencias
-    id "org.owasp.dependencycheck" version "7.4.4"
+    id "org.owasp.dependencycheck" version "9.0.7"
 }
 
 group = 'fr.christophetd.log4shell'
@@ -38,12 +38,10 @@ sonarqube {
 dependencyCheck {
     formats = ['HTML', 'XML']
     failOnError = false
-	nvd {
-        // Busca la propiedad en el sistema o usa null si no existe
-        apiKey = System.getProperty('nvdApiKey')
-        delay = 6000 // Con API Key puedes bajar el delay (antes era 16000)
-		}
-}
+    // Usamos la propiedad directa para la API Key
+    nvdApiKey = System.getProperty('nvdApiKey')
+    // Delay recomendado con API Key es de 2000 a 4000ms
+    delay = 4000
 
 test {
     useJUnitPlatform()
