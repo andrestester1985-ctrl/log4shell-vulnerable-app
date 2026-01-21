@@ -30,6 +30,15 @@ jobs:
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
       
+      # Este paso audita los archivos generados por el build de arriba
+      - name: Security Dependency Scan (OWASP)
+        env:
+          NVD_KEY: ${{ secrets.NVD_API_KEY }}
+        run: |
+          mvn org.owasp:dependency-check-maven:8.4.3:check \
+          -DnvdApiKey=$NVD_KEY \
+          -DfailBuildOnCVSS=7 \
+          -Dformat=HTML
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
