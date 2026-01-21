@@ -1,26 +1,26 @@
 from pytm import TM, Server, Datastore, Dataflow, Boundary
 
-tm = TM("Log4Shell Vulnerable API Model")
-tm.description = "Modelo de amenazas para API PCI"
+tm = TM("Log4Shell Vulnerable API")
+tm.description = "Análisis de amenazas - Caso Log4Shell"
 
-# Límites
+# Definición de arquitectura
 internet = Boundary("Internet")
-trust_zone = Boundary("Trusted Network")
+vpc = Boundary("VPC Trusted")
 
-# Activos
-user = Server("User Browser")
+user = Server("External User")
 user.in_boundary = internet
 
-api_service = Server("Vulnerable API Service")
-api_service.in_boundary = trust_zone
-api_service.is_web_server = True
+api = Server("Spring Boot API")
+api.in_boundary = vpc
+api.is_web_server = True
 
-db = Datastore("PCI Database")
-db.in_boundary = trust_zone
+db = Datastore("User Database")
+db.in_boundary = vpc
+db.is_encrypted = False
 
-# Flujos
-Dataflow(user, api_service, "HTTPS Traffic")
-Dataflow(api_service, db, "SQL Connection")
+# Conexiones
+Dataflow(user, api, "HTTPS (Potential Log4j Payload)")
+Dataflow(api, db, "SQL connection")
 
-# Esto es lo más importante
+# Ejecución
 tm.process()
