@@ -40,6 +40,7 @@ jobs:
 # --- PASO DE MODELADO DE AMENAZAS (THREAGILE) ---
       - name: Threat Modeling with Threagile
         run: |
+          # Ejecución directa. Si falla, el pipeline sigue gracias al continue-on-error
           docker run --rm \
             -v "$(pwd)":/app/work \
             -w /app/work \
