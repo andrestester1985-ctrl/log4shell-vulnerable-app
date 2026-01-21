@@ -30,16 +30,7 @@ jobs:
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
       
-    # 2. ESCANEO DE DEPENDENCIAS (SCA)
-      # Configuramos CACHE para no bajar las firmas desde cero cada vez
-      - name: Cache OWASP Dependency Check Data
-        uses: actions/cache@v4
-        with:
-          path: dependency-check/data
-          key: ${{ runner.os }}-odc-data
-          restore-keys: |
-            ${{ runner.os }}-odc-data
-
+    # 1. ESCANEO DE DEPENDENCIAS (Generando JSON para Sonar)
       - name: Security Dependency Scan (OWASP CLI)
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
@@ -53,13 +44,13 @@ jobs:
             --project "Log4Shell-Demo" \
             --scan "build/libs" \
             --format "HTML" \
-            --format "XML" \
+            --format "JSON" \
             --out "." \
-            --failOnCVSS 11 \
             --nvdApiKey "$NVD_API_KEY" \
-            --disableOssIndex
+            --disableOssIndex \
+            --failOnCVSS 11
 
-      # 3. SONARCLOUD SCAN (Subiendo el reporte XML)
+      # 2. SONARCLOUD SCAN (Vinculación Directa)
       - name: SonarCloud Scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -69,8 +60,8 @@ jobs:
             -Dsonar.projectKey=andrestester1985-ctrl_log4shell-vulnerable-app \
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.dependencyCheck.htmlReportPath=dependency-check-report.html \
-            -Dsonar.dependencyCheck.xmlReportPath=dependency-check-report.xml
+            -Dsonar.dependencyCheck.jsonReportPath=dependency-check-report.json \
+            -Dsonar.dependencyCheck.htmlReportPath=dependency-check-report.html
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
