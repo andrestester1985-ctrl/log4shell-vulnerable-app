@@ -1,0 +1,40 @@
+threagile_api_version: 1.0.0
+project:
+  title: Log4Shell Vulnerable API - PCI Scope
+  owner: Andres Tester
+  status: development
+
+# Aquí definimos que tenemos datos PCI (Tarjetas)
+data_assets:
+  Credit_Card_Data:
+    usage: business
+    tags: [pci]
+    confidentiality: confidential
+    integrity: critical
+    availability: critical
+
+# Tu aplicación y su riesgo de cifrado
+technical_assets:
+  Vulnerable_API:
+    type: process
+    usage: business
+    size: service
+    technology: spring-boot
+    tags: [pci]
+    internet: true
+    # Aquí es donde Threagile detectará el problema si el cifrado no es fuerte
+    encryption: none 
+    confidentiality: confidential
+    integrity: critical
+    availability: critical
+    data_assets_processed: [Credit_Card_Data]
+
+# Comunicación de la API
+communication_links:
+  HTTPS_Traffic:
+    target: Vulnerable_API
+    source: Vulnerable_API
+    protocol: https
+    authentication: none
+    authorization: none
+    usage: business

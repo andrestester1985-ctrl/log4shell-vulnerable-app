@@ -37,6 +37,22 @@ jobs:
           docker build -t ghcr.io/$REPO:latest .
           docker push ghcr.io/$REPO:latest
 
+# --- PASO DE MODELADO DE AMENAZAS (THREAGILE) ---
+      - name: Threat Modeling with Threagile
+        run: |
+          docker run --rm \
+            -v $(pwd):/app/work \
+            threagile/threagile:latest \
+            analyze --model /app/work/threagile.yaml --output /app/work/threagile-output
+        continue-on-error: true # Para que no detenga el pipeline en la demo, pero genere el reporte
+
+      - name: Upload Threat Model Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: threat-model-report
+          path: threagile-output/report.pdf
+          
       # 2. SCA: DEPENDENCY CHECK
       - name: Cache Dependency Check Data
         uses: actions/cache@v4
