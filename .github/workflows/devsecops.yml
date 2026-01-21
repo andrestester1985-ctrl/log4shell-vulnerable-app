@@ -30,12 +30,13 @@ jobs:
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
       
-    # 2. ESCANEO DE DEPENDENCIAS (SCA) - Versión CLI corregida
+    # 2. ESCANEO DE DEPENDENCIAS (SCA) - Versión 12.1.0 (API v2 compatible)
       - name: Security Dependency Scan (OWASP CLI)
         env:
-          NVD_KEY: ${{ secrets.NVD_API_KEY }}
+          # Usamos el nombre de variable que el motor reconoce nativamente
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
-          VERSION="8.4.3"
+          VERSION="12.1.0"
           if [ ! -d "dependency-check" ]; then
             curl -sLO https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip
             unzip -q dependency-check-$VERSION-release.zip
@@ -46,6 +47,7 @@ jobs:
             --format "HTML" \
             --out "." \
             --failOnCVSS 7 \
+            --nvdApiKey "$NVD_API_KEY"
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
