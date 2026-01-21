@@ -30,6 +30,9 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
       
       - name: Run Dependency Check
+        env:
+          # Pasamos el secreto al entorno del runner
+          NVD_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
           ./gradlew build dependencyCheckAnalyze
 

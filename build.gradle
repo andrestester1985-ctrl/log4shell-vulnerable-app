@@ -38,6 +38,11 @@ sonarqube {
 dependencyCheck {
     formats = ['HTML', 'XML']
     failOnError = false
+	nvd {
+        // Busca la propiedad en el sistema o usa null si no existe
+        apiKey = System.getProperty('nvdApiKey')
+        delay = 6000 // Con API Key puedes bajar el delay (antes era 16000)
+		}
 }
 
 test {
