@@ -9,6 +9,10 @@ plugins {
 dependencyCheck {
     formats = ['HTML', 'XML']
     outputDirectory = "${buildDir}/reports/dependency-check"
+	nvd {
+        // Aumentamos el delay para ser "amigables" con el servidor del NIST
+        delay = 16000 
+    }
 }
 
 sonarqube {
