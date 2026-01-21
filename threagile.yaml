@@ -3,12 +3,9 @@ project:
   title: Log4Shell Vulnerable API
   owner: Andres Tester
   status: development
-  # VALOR EXACTO: Threagile usa "important" o "critical" pero en minúsculas
-  # Si este falla, probaremos quitando la línea por completo
-  business_criticality: important
 
 data_assets:
-  Sensitive_Data:
+  PCI_Data:
     usage: business
     confidentiality: confidential
     integrity: critical
@@ -24,12 +21,10 @@ technical_assets:
     confidentiality: confidential
     integrity: critical
     availability: critical
-    # VALOR EXACTO PARA ASSETS
-    business_criticality: important
-    data_assets_processed: [Sensitive_Data]
+    data_assets_processed: [PCI_Data]
 
 communication_links:
-  Traffic:
+  HTTPS_Traffic:
     target: Vulnerable_API
     source: Vulnerable_API
     protocol: https
