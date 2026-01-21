@@ -9,11 +9,14 @@ import java.util.Map;
 public class WelcomeController {
 
     @GetMapping("/")
-    public Map<String, Object> home() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "Vulnerable App is Online");
-        response.put("message", "DevSecOps Pipeline: DAST stage in progress");
-        response.put("target", "CVE-2021-44228 Analysis");
-        return response;
+    public ResponseEntity<Map<String, Object>> getStatus() {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", "UP");
+        body.put("service", "Log4Shell-Vulnerable-API");
+        body.put("version", "1.0.0");
+        body.put("checks", "DevSecOps Pipeline Active");
+        
+        // Devolvemos un 200 OK con el cuerpo JSON
+        return ResponseEntity.ok(body);
     }
 }

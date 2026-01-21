@@ -61,8 +61,13 @@ jobs:
         run: |
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker run -d -p 8080:8080 --name app-vulnerable ghcr.io/$REPO:latest
-          echo "Esperando a que la app responda..."
-          timeout 60s bash -c 'until [ "$(curl -s -o /dev/null -w "%{http_code}" localhost:8080/)" == "200" ]; do sleep 5; done'
+          
+          echo "Validando API REST en http://localhost:8080/ ..."
+          timeout 90s bash -c 'until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/)" == "200" ]; do 
+            echo "API aún no disponible... reintentando"
+            sleep 5
+          done'
+          echo "✅ API REST detectada y funcionando!"
 
       - name: Run ZAP DAST (Manual Scan)
         run: |
