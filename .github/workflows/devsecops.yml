@@ -36,6 +36,12 @@ jobs:
           find ~/.gradle/caches -name "*jackson*.jar" -delete 2>/dev/null || true
           find ~/.gradle/caches -name "*jackson*.lock" -delete 2>/dev/null || true
 
+      - name: Clear Gradle cache for Jackson
+        run: |
+         rm -f ~/.gradle/caches/**/jackson-*.jar 2>/dev/null || true
+         rm -f ~/.gradle/caches/**/jackson-*.pom 2>/dev/null || true
+         rm -rf ~/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core 2>/dev/null || true
+
       - name: Run Dependency Check
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}  # Nota: NVD_API_KEY, no NVD_KEY
