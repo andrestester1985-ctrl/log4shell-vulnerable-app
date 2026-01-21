@@ -37,17 +37,28 @@ jobs:
           docker build -t ghcr.io/$REPO:latest .
           docker push ghcr.io/$REPO:latest
 
-# --- PASO DE MODELADO DE AMENAZAS (THREAGILE 0.9.1) ---
-      - name: Threat Modeling with Threagile
+# --- PASO DE MODELADO DE AMENAZAS (OWASP PyTM) ---
+      - name: Threat Modeling with PyTM
         run: |
-          mkdir -p threagile-output
-          # Probamos el tag exacto de la versión estable
-          docker run --rm \
-            -v "$(pwd)":/app/work \
-            -w /app/work \
-            threagile/threagile:0.9.1 \
-            analyze --model threagile.yaml --output threagile-output
+          # Instalamos PyTM y Graphviz (para los diagramas)
+          pip install pytm
+          sudo apt-get install -y graphviz
+          
+          # Ejecutamos el modelo para generar reporte y diagrama
+          # Genera un reporte en formato Markdown
+          python threat_model.py --report docs/threat_report.md > threat_model_report.md
+          
+          # Generar el Diagrama de Flujo de Datos (DFD)
+          python threat_model.py --dfd | dot -Tpng -o docs/dfd.png
         continue-on-error: true
+
+      - name: Upload Threat Model Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: threat-model-reports
+          path: |
+            threat_model_report.md
+            docs/dfd.png
 
       # 2. SCA: DEPENDENCY CHECK
       - name: Cache Dependency Check Data
