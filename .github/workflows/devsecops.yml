@@ -44,11 +44,11 @@ jobs:
           mkdir -p threagile-output
           chmod 777 threagile-output
           
-          # Usamos la v1.5.0 que es la más estable para modelos PCI
+          # Volvemos a latest, el problema estaba en el contenido del YAML
           docker run --rm \
             -v "$(pwd)":/app/work \
             -w /app/work \
-            threagile/threagile:v1.5.0 \
+            threagile/threagile:latest \
             analyze --model threagile.yaml --output threagile-output
         continue-on-error: true 
 
