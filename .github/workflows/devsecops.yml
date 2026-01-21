@@ -44,14 +44,17 @@ jobs:
           mkdir -p threagile-output
           chmod 777 threagile-output
           
-          # Añadimos --verbose para ver el diccionario de valores aceptados
+          # Debug: Ver exactamente qué hay en el archivo
+          echo "--- CONTENIDO DEL YAML ---"
+          cat threagile.yaml
+          echo "--------------------------"
+          
           docker run --rm \
             -v "$(pwd)":/app/work \
             -w /app/work \
             threagile/threagile:latest \
-            analyze --model threagile.yaml --output threagile-output --verbose || true
+            analyze --model threagile.yaml --output threagile-output || true
           
-          echo "Contenido de la carpeta de salida:"
           ls -R threagile-output
         continue-on-error: true 
 
