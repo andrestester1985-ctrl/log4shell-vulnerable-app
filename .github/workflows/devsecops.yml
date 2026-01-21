@@ -40,25 +40,27 @@ jobs:
 # --- PASO DE MODELADO DE AMENAZAS (OWASP PyTM) ---
       - name: Threat Modeling with PyTM
         run: |
-          # Instalamos PyTM y Graphviz (para los diagramas)
+          # 1. Preparar el entorno
           pip install pytm
           sudo apt-get install -y graphviz
+          mkdir -p docs  # <--- Esto evita el error de "No such file"
+
+          # 2. Generar el reporte (Formato Markdown)
+          # PyTM por defecto imprime el reporte a la consola, lo redirigimos a un archivo
+          python threat_model.py --report > docs/threat_report.md
           
-          # Ejecutamos el modelo para generar reporte y diagrama
-          # Genera un reporte en formato Markdown
-          python threat_model.py --report docs/threat_report.md > threat_model_report.md
-          
-          # Generar el Diagrama de Flujo de Datos (DFD)
+          # 3. Generar el Diagrama de Flujo de Datos (DFD)
           python threat_model.py --dfd | dot -Tpng -o docs/dfd.png
+          
+          # 4. Listar para verificar (aparecerá en tu log)
+          ls -R docs/
         continue-on-error: true
 
       - name: Upload Threat Model Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: threat-model-reports
-          path: |
-            threat_model_report.md
-            docs/dfd.png
+          path: docs/
 
       # 2. SCA: DEPENDENCY CHECK
       - name: Cache Dependency Check Data
