@@ -3,11 +3,9 @@ project:
   title: Log4Shell Vulnerable API
   owner: Andres Tester
   status: development
-  # Este es el campo que te está matando. En el código de Go, 'important' es un valor válido.
-  business_criticality: important
 
 data_assets:
-  Sensitive_Data:
+  PCI_Data:
     usage: business
     confidentiality: confidential
     integrity: critical
@@ -23,15 +21,11 @@ technical_assets:
     confidentiality: confidential
     integrity: critical
     availability: critical
-    # Aquí también debe ser exacto
-    business_criticality: important
-    data_assets_processed: [Sensitive_Data]
+    data_assets_processed: [PCI_Data]
 
 communication_links:
-  Traffic:
+  HTTPS_Traffic:
     target: Vulnerable_API
     source: Vulnerable_API
     protocol: https
-    authentication: none
-    authorization: none
     usage: business

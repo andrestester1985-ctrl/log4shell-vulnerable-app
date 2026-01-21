@@ -41,15 +41,14 @@ jobs:
       - name: Threat Modeling with Threagile
         run: |
           mkdir -p threagile-output
-          # Ejecutamos 'explain' antes de 'analyze' para que el contenedor inicialice su diccionario interno
-          docker run --rm -v "$(pwd)":/app/work -w /app/work threagile/threagile:latest explain || true
+          chmod 777 threagile-output
           
-          # Ahora el análisis real
+          # Apuntamos a la versión inicial estable documentada
           docker run --rm \
             -v "$(pwd)":/app/work \
             -w /app/work \
-            threagile/threagile:latest \
-            analyze --model threagile.yaml --output threagile-output || true
+            threagile/threagile:v0.0.1 \
+            analyze --model threagile.yaml --output threagile-output
         continue-on-error: true
 
       # 2. SCA: DEPENDENCY CHECK
