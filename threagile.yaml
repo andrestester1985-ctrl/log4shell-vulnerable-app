@@ -7,7 +7,6 @@ project:
 data_assets:
   Credit_Card_Data:
     usage: business
-    tags: [pci]
     confidentiality: confidential
     integrity: critical
     availability: critical
@@ -18,14 +17,11 @@ technical_assets:
     usage: business
     size: service
     technology: spring-boot
-    tags: [pci]
     internet: true
     encryption: none
     confidentiality: confidential
     integrity: critical
     availability: critical
-    # AQUÍ ESTABA EL ERROR: Usamos un valor estándar
-    business_criticality: critical
     data_assets_processed: [Credit_Card_Data]
 
 communication_links:

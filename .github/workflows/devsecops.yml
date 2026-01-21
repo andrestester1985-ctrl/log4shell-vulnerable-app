@@ -58,8 +58,8 @@ jobs:
         with:
           name: threat-model-report
           path: |
-            threagile-output/report.pdf
-            threagile-output/data-flow-diagram.png
+            threagile-output/*.pdf
+            threagile-output/*.png
 
       # 2. SCA: DEPENDENCY CHECK
       - name: Cache Dependency Check Data
