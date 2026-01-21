@@ -2,7 +2,8 @@ package fr.christophetd.log4shell.vulnerableapp;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.HashMap;
+import org.springframework.http.ResponseEntity; // IMPORTANTE: Corrige el error de ResponseEntity
+import java.util.LinkedHashMap;              // IMPORTANTE: Corrige el error de LinkedHashMap
 import java.util.Map;
 
 @RestController
@@ -16,7 +17,7 @@ public class WelcomeController {
         body.put("version", "1.0.0");
         body.put("checks", "DevSecOps Pipeline Active");
         
-        // Devolvemos un 200 OK con el cuerpo JSON
+        // Retorna un JSON con código 200 OK
         return ResponseEntity.ok(body);
     }
 }
