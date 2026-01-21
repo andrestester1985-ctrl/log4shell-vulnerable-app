@@ -16,10 +16,15 @@ repositories {
 
 // Resolución de Jackson para evitar error de JAR
 configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'com.fasterxml.jackson.core') {
-            details.useVersion '2.13.0'
-        }
+    resolutionStrategy {
+        // Forzar versión específica de Jackson para evitar conflictos
+        force 'com.fasterxml.jackson.core:jackson-core:2.15.3'
+        force 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+        force 'com.fasterxml.jackson.core:jackson-annotations:2.15.3'
+        
+        // Cache dinámica para dependencias (evita archivos corruptos)
+        cacheDynamicVersionsFor 10, 'minutes'
+        cacheChangingModulesFor 10, 'minutes'
     }
 }
 
@@ -30,6 +35,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-log4j2:2.6.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
     implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+
+	 // Añadir explícitamente Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

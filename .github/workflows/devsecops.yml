@@ -17,6 +17,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'gradle'  # IMPORTANTE: Habilitar caché de Gradle
 
 
       - name: SonarCloud Scan
@@ -29,11 +30,19 @@ jobs:
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
       
+      - name: Clear corrupted Jackson cache
+        run: |
+          echo "Cleaning corrupted Jackson dependencies..."
+          find ~/.gradle/caches -name "*jackson*.jar" -delete 2>/dev/null || true
+          find ~/.gradle/caches -name "*jackson*.lock" -delete 2>/dev/null || true
+
       - name: Run Dependency Check
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}  # Nota: NVD_API_KEY, no NVD_KEY
         run: |
+          ./gradlew clean --refresh-dependencies
           ./gradlew dependencyCheckAnalyze --no-daemon --stacktrace
+          /gradlew build -x test --no-daemon
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
