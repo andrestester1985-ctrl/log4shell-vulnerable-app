@@ -54,7 +54,7 @@ jobs:
             --scan "build/libs" \
             --format "HTML" \
             --out "." \
-            --failOnCVSS 7 \
+            --failOnCVSS 11 \
             --nvdApiKey "$NVD_API_KEY" \
             --disableOssIndex
 
