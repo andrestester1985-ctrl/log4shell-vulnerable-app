@@ -4,6 +4,8 @@ plugins {
     id 'java'
     // Solo activamos SonarCloud
     id "org.sonarqube" version "3.3"
+	// Plugin de OWASP para el escaneo de dependencias
+    id "org.owasp.dependencycheck" version "7.4.4"
 }
 
 group = 'fr.christophetd.log4shell'
@@ -30,6 +32,12 @@ sonarqube {
     properties {
         property "sonar.java.binaries", "build/classes/java/main"
     }
+}
+
+// Configuración básica: genera reporte pero no bloquea si falla el servidor del NIST
+dependencyCheck {
+    formats = ['HTML', 'XML']
+    failOnError = false
 }
 
 test {
