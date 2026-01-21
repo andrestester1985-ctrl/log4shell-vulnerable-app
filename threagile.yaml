@@ -3,6 +3,8 @@ project:
   title: Log4Shell Vulnerable API
   owner: Andres Tester
   status: development
+  # Añadimos criticidad global por si el motor la pide aquí
+  business_criticality: important
 
 data_assets:
   Credit_Card_Data:
@@ -18,17 +20,16 @@ technical_assets:
     size: service
     technology: spring-boot
     internet: true
-    # Usamos valores que Threagile no cuestionará
-    confidentiality: internal
-    integrity: archive
-    availability: archive
+    encryption: none
+    confidentiality: confidential
+    integrity: critical
+    availability: critical
+    # Intentamos ambos formatos de nombre para asegurar
+    business_criticality: critical
     data_assets_processed: [Credit_Card_Data]
 
-communication_links:
-  HTTPS_Traffic:
-    target: Vulnerable_API
-    source: Vulnerable_API
-    protocol: https
-    authentication: none
-    authorization: none
-    usage: business
+# Threagile a veces falla si no hay límites de confianza definidos
+trust_boundaries:
+  Internet_Boundary:
+    type: network-cloud-provider
+    technical_assets_inside: [Vulnerable_API]
