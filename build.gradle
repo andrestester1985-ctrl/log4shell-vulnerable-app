@@ -14,19 +14,7 @@ repositories {
     mavenCentral()
 }
 
-// Resolución de Jackson para evitar error de JAR
-configurations.all {
-    resolutionStrategy {
-        // Forzar versión específica de Jackson para evitar conflictos
-        force 'com.fasterxml.jackson.core:jackson-core:2.15.3'
-        force 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
-        force 'com.fasterxml.jackson.core:jackson-annotations:2.15.3'
-        
-        // Cache dinámica para dependencias (evita archivos corruptos)
-        cacheDynamicVersionsFor 10, 'minutes'
-        cacheChangingModulesFor 10, 'minutes'
-    }
-}
+
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web') {
@@ -35,10 +23,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-log4j2:2.6.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
     implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
-
-	 // Añadir explícitamente Jackson
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.3'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -49,33 +33,7 @@ sonarqube {
     }
 }
 
-//dependencyCheck {
-//    formats = ['HTML', 'XML', 'JSON']
-  //  failOnError = false
-    //failBuildOnCVSS = 8.0  // Fallar solo en vulnerabilidades críticas
-    //suppressionFile = 'dependency-check-suppressions.xml'  // Opcional: archivo de exclusiones
-    
-    // CONFIGURACIÓN NVD CORRECTA para versión 8.x
-   // nvd {
-     //   apiKey = project.hasProperty('nvdApiKey') ? project.nvdApiKey : ''
-        // El delay ahora se configura como tiempo de espera entre peticiones
-       // delay = 6000  // 6 segundos entre peticiones (recomendado con API key)
-    //}
-    
-    // Analizadores específicos (opcional)
-    //analyzers {
-    //    retirejs {
-     //       enabled = true
-     //   }
-    //    ossIndex {
-    //        enabled = false  // Deshabilitar si no usas Sonatype OSS Index
-       // }
-   // }
-    
-    // Configuración de caché
-    //autoUpdate = true
-    ///cveValidForHours = 4  // Horas antes de actualizar la base de datos
-//}
+
 
 test {
     useJUnitPlatform()
