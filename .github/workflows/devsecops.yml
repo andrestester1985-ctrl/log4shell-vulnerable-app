@@ -40,16 +40,16 @@ jobs:
 # --- PASO DE MODELADO DE AMENAZAS (THREAGILE) ---
       - name: Threat Modeling with Threagile
         run: |
-          # 1. Preparamos el terreno (Crucial para evitar errores de permisos)
+          # 1. Crear carpeta de salida
           mkdir -p threagile-output
           chmod 777 threagile-output
           
-          # 2. Ejecutamos el análisis
-          # Usamos las rutas completas dentro del contenedor (/app/work/...)
+          # 2. Ejecutar con la ruta de trabajo explícita (-w)
           docker run --rm \
             -v "$(pwd)":/app/work \
+            -w /app/work \
             threagile/threagile:latest \
-            analyze --model /app/work/threagile.yaml --output /app/work/threagile-output
+            analyze --model threagile.yaml --output threagile-output
         continue-on-error: true 
 
       - name: Upload Threat Model Report
