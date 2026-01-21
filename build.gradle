@@ -40,12 +40,12 @@ sonarqube {
 }
 
 // SINTAXIS DEFINITIVA: Usamos el nombre completo del bloque para evitar ambigüedad
-configure(project.extensions.getByName("dependencyCheck")) {
+dependencyCheck {
     formats = ['HTML', 'XML']
     failOnError = false
-    nvd {
-        apiKey = System.getProperty('nvdApiKey')
-        delay = 4000
+    // La configuración para NVD se realiza directamente aquí, no en un bloque 'nvd'
+    if (System.getProperty('nvdApiKey')) {
+        nvdApiKey = System.getProperty('nvdApiKey')
     }
 }
 
