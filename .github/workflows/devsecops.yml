@@ -31,9 +31,9 @@ jobs:
       
       - name: Run Dependency Check
         env:
-        NVD_API_KEY: ${{ secrets.NVD_API_KEY }}  # Nota: NVD_API_KEY, no NVD_KEY
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}  # Nota: NVD_API_KEY, no NVD_KEY
         run: |
-         ./gradlew dependencyCheckAnalyze --no-daemon --stacktrace
+          ./gradlew dependencyCheckAnalyze --no-daemon --stacktrace
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
