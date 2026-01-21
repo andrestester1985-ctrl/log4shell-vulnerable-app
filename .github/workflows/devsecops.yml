@@ -47,10 +47,13 @@ jobs:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
           VERSION="12.1.0"
-          if [ ! -d "dependency-check" ]; then
+          # CAMBIO CLAVE: Validamos si existe el BINARIO, no la carpeta de datos
+          if [ ! -f "./dependency-check/bin/dependency-check.sh" ]; then
+            echo "Instalando binarios de Dependency Check..."
             curl -sLO https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip
-            unzip -q dependency-check-$VERSION-release.zip
+            unzip -o -q dependency-check-$VERSION-release.zip # -o para sobrescribir si es necesario
           fi
+          chmod +x ./dependency-check/bin/dependency-check.sh
           ./dependency-check/bin/dependency-check.sh \
             --project "Log4Shell-Demo" \
             --scan "build/libs" \
