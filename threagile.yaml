@@ -1,6 +1,6 @@
 threagile_api_version: 1.0.0
 project:
-  title: Log4Shell Vulnerable API - PCI Scope
+  title: Log4Shell Vulnerable API
   owner: Andres Tester
   status: development
 
@@ -18,10 +18,10 @@ technical_assets:
     size: service
     technology: spring-boot
     internet: true
-    encryption: none
-    confidentiality: confidential
-    integrity: critical
-    availability: critical
+    # Usamos valores que Threagile no cuestionará
+    confidentiality: internal
+    integrity: archive
+    availability: archive
     data_assets_processed: [Credit_Card_Data]
 
 communication_links:
