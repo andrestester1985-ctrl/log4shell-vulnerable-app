@@ -47,8 +47,10 @@ sonarqube {
 dependencyCheck {
     formats = ['HTML', 'XML']
     failOnError = false
-   // En la v7.4.4 la API Key se pasa directamente así
-    nvdApiKey = System.getProperty('nvdApiKey')
+   nvd {
+        apiKey = System.getProperty('nvdApiKey')
+        delay = 4000
+    }
 }
 
 test {
