@@ -4,6 +4,7 @@ package fr.christophetd.log4shell.vulnerableapp;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
