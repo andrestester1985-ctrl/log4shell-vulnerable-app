@@ -46,7 +46,6 @@ jobs:
             --format "HTML" \
             --out "." \
             --failOnCVSS 7 \
-            --property "nvd.api.key=$NVD_KEY"
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
