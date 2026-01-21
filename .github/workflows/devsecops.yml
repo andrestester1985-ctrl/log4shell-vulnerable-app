@@ -40,16 +40,15 @@ jobs:
 # --- PASO DE MODELADO DE AMENAZAS (THREAGILE) ---
       - name: Threat Modeling with Threagile
         run: |
-          # Limpieza preventiva
           rm -rf threagile-output
           mkdir -p threagile-output
           chmod 777 threagile-output
           
-          # Ejecutar con el nombre de archivo explícito
+          # Usamos la v1.5.0 que es la más estable para modelos PCI
           docker run --rm \
             -v "$(pwd)":/app/work \
             -w /app/work \
-            threagile/threagile:latest \
+            threagile/threagile:v1.5.0 \
             analyze --model threagile.yaml --output threagile-output
         continue-on-error: true 
 

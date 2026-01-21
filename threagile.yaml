@@ -3,7 +3,7 @@ project:
   title: Log4Shell Vulnerable API
   owner: Andres Tester
   status: development
-  # Añadimos criticidad global por si el motor la pide aquí
+  # Esta es la línea que Threagile está buscando y no encuentra:
   business_criticality: important
 
 data_assets:
@@ -24,12 +24,11 @@ technical_assets:
     confidentiality: confidential
     integrity: critical
     availability: critical
-    # Intentamos ambos formatos de nombre para asegurar
-    business_criticality: critical
+    # Aseguramos que la criticidad técnica también sea reconocida
+    technical_readiness: production
     data_assets_processed: [Credit_Card_Data]
 
-# Threagile a veces falla si no hay límites de confianza definidos
 trust_boundaries:
-  Internet_Boundary:
+  Trust_Zone:
     type: network-cloud-provider
     technical_assets_inside: [Vulnerable_API]
