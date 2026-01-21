@@ -1,26 +1,38 @@
-from pytm import TM, Server, Datastore, Dataflow, Boundary
+from pytm import TM, Server, Datastore, Dataflow, Boundary, Actor
 
-tm = TM("Log4Shell Vulnerable API")
-tm.description = "Análisis de amenazas - Caso Log4Shell"
+tm = TM("PCI-DSS Compliant Threat Model")
+tm.description = "Análisis de amenazas para entorno CDE - Cumplimiento PCI"
 
-# Definición de arquitectura
-internet = Boundary("Internet")
-vpc = Boundary("VPC Trusted")
+# --- LÍMITES DE SEGURIDAD (Segmentación PCI) ---
+internet = Boundary("Public Internet")
+dmz = Boundary("DMZ (Public Facing)")
+cde = Boundary("CDE (Cardholder Data Environment)") # Zona más protegida
 
-user = Server("External User")
-user.in_boundary = internet
+# --- ACTORES Y ACTIVOS ---
+user = Actor("Customer")
 
-api = Server("Spring Boot API")
-api.in_boundary = vpc
-api.is_web_server = True
+# Servidor de API en la DMZ
+api_service = Server("Payment API Gateway")
+api_service.in_boundary = dmz
+api_service.is_web_server = True
+api_service.on_misuse = "Fraude en transacciones y fuga de PAN"
 
-db = Datastore("User Database")
-db.in_boundary = vpc
-db.is_encrypted = False
+# Base de datos en el CDE (Aislada)
+card_db = Datastore("Cardholder Data Repository")
+card_db.in_boundary = cde
+card_db.is_encrypted = True  # Requisito PCI 3.4
+card_db.stores_sensitive_data = True
+card_db.description = "Almacena PAN, fecha de expiración y nombres"
 
-# Conexiones
-Dataflow(user, api, "HTTPS (Potential Log4j Payload)")
-Dataflow(api, db, "SQL connection")
+# --- FLUJOS DE DATOS (PCI Data Flows) ---
+# Flujo 1: El usuario envía datos de tarjeta
+f1 = Dataflow(user, api_service, "Transacción de Pago (PAN/CVV)")
+f1.protocol = "HTTPS"
+f1.dst_port = 443
 
-# Ejecución
+# Flujo 2: La API procesa y guarda en el CDE (Cruzando frontera de confianza)
+f2 = Dataflow(api_service, card_db, "Persistencia de Datos Encriptados")
+f2.protocol = "TLS 1.2"
+f2.notes = "Cumple con requisito PCI de cifrado en tránsito"
+
 tm.process()
