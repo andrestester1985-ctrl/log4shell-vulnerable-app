@@ -30,10 +30,18 @@ jobs:
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
       
-    # 2. ESCANEO DE DEPENDENCIAS (SCA) - Versión 12.1.0 (API v2 compatible)
+    # 2. ESCANEO DE DEPENDENCIAS (SCA)
+      # Configuramos CACHE para no bajar las firmas desde cero cada vez
+      - name: Cache OWASP Dependency Check Data
+        uses: actions/cache@v4
+        with:
+          path: dependency-check/data
+          key: ${{ runner.os }}-odc-data
+          restore-keys: |
+            ${{ runner.os }}-odc-data
+
       - name: Security Dependency Scan (OWASP CLI)
         env:
-          # Usamos el nombre de variable que el motor reconoce nativamente
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
           VERSION="12.1.0"
@@ -47,7 +55,7 @@ jobs:
             --format "HTML" \
             --out "." \
             --failOnCVSS 7 \
-            --nvdApiKey "$NVD_API_KEY"
+            --nvdApiKey "$NVD_API_KEY" \
             --disableOssIndex
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
