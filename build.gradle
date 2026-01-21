@@ -16,6 +16,15 @@ repositories {
     mavenCentral()
 }
 
+// ESTO SOLUCIONA EL ERROR DEL JAR DE JACKSON
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'com.fasterxml.jackson.core') {
+            details.useVersion '2.13.0'
+        }
+    }
+}
+
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
@@ -38,11 +47,8 @@ sonarqube {
 dependencyCheck {
     formats = ['HTML', 'XML']
     failOnError = false
-   // En la v8.4.3 la API Key se configura preferiblemente dentro del bloque nvd
-    nvd {
-        apiKey = System.getProperty('nvdApiKey')
-        delay = 4000
-    }
+   // En la v7.4.4 la API Key se pasa directamente así
+    nvdApiKey = System.getProperty('nvdApiKey')
 }
 
 test {
