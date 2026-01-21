@@ -5,7 +5,7 @@ plugins {
     // Solo activamos SonarCloud
     id "org.sonarqube" version "3.3"
 	// Plugin de OWASP para el escaneo de dependencias
-    id "org.owasp.dependencycheck" version "8.4.3"
+    id "org.owasp.dependencycheck" version "7.4.4"
 }
 
 group = 'fr.christophetd.log4shell'
