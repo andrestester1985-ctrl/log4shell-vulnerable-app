@@ -14,7 +14,7 @@ repositories {
     mavenCentral()
 }
 
-// 1. Resolución de conflictos de Jackson (Vital para evitar el error de JAR)
+// Resolución de Jackson para evitar error de JAR
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         if (details.requested.group == 'com.fasterxml.jackson.core') {
@@ -33,16 +33,14 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-// 2. Configuración de SonarCloud
 sonarqube {
     properties {
         property "sonar.java.binaries", "build/classes/java/main"
     }
 }
 
-// 3. Configuración de Dependency Check (Sintaxis compatible v7.4.4)
-// Usamos 'project.extensions.configure' para asegurar que Gradle encuentre el método
-project.extensions.configure(org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension) {
+// SINTAXIS DEFINITIVA: Usamos el nombre completo del bloque para evitar ambigüedad
+configure(project.extensions.getByName("dependencyCheck")) {
     formats = ['HTML', 'XML']
     failOnError = false
     nvd {
