@@ -30,22 +30,23 @@ jobs:
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
       
-      # 2. ESCANEO DE DEPENDENCIAS (SCA) - Usando el CLI oficial (Sin Maven ni Gradle)
+    # 2. ESCANEO DE DEPENDENCIAS (SCA) - Versión CLI corregida
       - name: Security Dependency Scan (OWASP CLI)
         env:
           NVD_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
-          # 1. Descargar la herramienta oficial
           VERSION="8.4.3"
-          curl -sLO https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip
-          unzip -q dependency-check-$VERSION-release.zip    
+          if [ ! -d "dependency-check" ]; then
+            curl -sLO https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip
+            unzip -q dependency-check-$VERSION-release.zip
+          fi
           ./dependency-check/bin/dependency-check.sh \
             --project "Log4Shell-Demo" \
             --scan "build/libs" \
             --format "HTML" \
             --out "." \
-            --nvdApiKey "$NVD_KEY" \
-            --failOnCVSS 7
+            --failOnCVSS 7 \
+            --property "nvd.api.key=$NVD_KEY"
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
