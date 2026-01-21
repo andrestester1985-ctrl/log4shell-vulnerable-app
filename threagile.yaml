@@ -3,11 +3,11 @@ project:
   title: Log4Shell Vulnerable API
   owner: Andres Tester
   status: development
-  # Usamos el valor por defecto que Threagile usa internamente
-  business_criticality: archive
+  # Este es el valor que el código fuente de Threagile usa como fallback
+  business_criticality: internal
 
 data_assets:
-  Credit_Card_Data:
+  Sensitive_Data:
     usage: business
     confidentiality: confidential
     integrity: critical
@@ -18,16 +18,15 @@ technical_assets:
     type: process
     usage: business
     size: service
-    technology: web-service-poker-facade
+    technology: web-service
     internet: true
-    encryption: none
     confidentiality: confidential
     integrity: critical
     availability: critical
-    data_assets_processed: [Credit_Card_Data]
+    data_assets_processed: [Sensitive_Data]
 
 communication_links:
-  Traffic:
+  Internal_Traffic:
     target: Vulnerable_API
     source: Vulnerable_API
     protocol: https
