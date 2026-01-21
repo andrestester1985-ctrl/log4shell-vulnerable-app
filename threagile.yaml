@@ -3,8 +3,8 @@ project:
   title: Log4Shell Vulnerable API
   owner: Andres Tester
   status: development
-  # En algunas versiones, Threagile espera un valor de texto simple
-  business_criticality: important
+  # Usamos el valor por defecto que Threagile usa internamente
+  business_criticality: archive
 
 data_assets:
   Credit_Card_Data:
@@ -18,18 +18,19 @@ technical_assets:
     type: process
     usage: business
     size: service
-    technology: spring-boot
-    tags: [pci]
+    technology: web-service-poker-facade
     internet: true
     encryption: none
     confidentiality: confidential
     integrity: critical
     availability: critical
-    # Aquí está el truco: usamos valores de texto que mapean a su esquema interno
-    business_criticality: critical
     data_assets_processed: [Credit_Card_Data]
 
-trust_boundaries:
-  Network_Trust_Boundary:
-    type: network-cloud-provider
-    technical_assets_inside: [Vulnerable_API]
+communication_links:
+  Traffic:
+    target: Vulnerable_API
+    source: Vulnerable_API
+    protocol: https
+    authentication: none
+    authorization: none
+    usage: business
