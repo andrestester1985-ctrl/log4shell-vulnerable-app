@@ -42,6 +42,7 @@ dependencyCheck {
     nvdApiKey = System.getProperty('nvdApiKey')
     // Delay recomendado con API Key es de 2000 a 4000ms
     delay = 4000
+}
 
 test {
     useJUnitPlatform()
