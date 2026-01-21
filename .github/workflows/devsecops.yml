@@ -40,19 +40,27 @@ jobs:
 # --- PASO DE MODELADO DE AMENAZAS (THREAGILE) ---
       - name: Threat Modeling with Threagile
         run: |
+          # 1. Preparamos el terreno (Crucial para evitar errores de permisos)
+          mkdir -p threagile-output
+          chmod 777 threagile-output
+          
+          # 2. Ejecutamos el análisis
+          # Usamos las rutas completas dentro del contenedor (/app/work/...)
           docker run --rm \
-            -v $(pwd):/app/work \
+            -v "$(pwd)":/app/work \
             threagile/threagile:latest \
             analyze --model /app/work/threagile.yaml --output /app/work/threagile-output
-        continue-on-error: true # Para que no detenga el pipeline en la demo, pero genere el reporte
+        continue-on-error: true 
 
       - name: Upload Threat Model Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: threat-model-report
-          path: threagile-output/report.pdf
-          
+          path: |
+            threagile-output/report.pdf
+            threagile-output/data-flow-diagram.png
+
       # 2. SCA: DEPENDENCY CHECK
       - name: Cache Dependency Check Data
         uses: actions/cache@v4
