@@ -1,18 +1,20 @@
 threagile_api_version: 1.0.0
 project:
-  title: "PCI API Scan"
-  owner: "Andres"
-  status: "development"
+  title: Log4Shell Vulnerable API
+  owner: Andres Tester
+  status: development
+  # Este es el campo que te está matando. En el código de Go, 'important' es un valor válido.
+  business_criticality: important
 
 data_assets:
-  Credit_Card:
+  Sensitive_Data:
     usage: business
     confidentiality: confidential
     integrity: critical
     availability: critical
 
 technical_assets:
-  Web_API:
+  Vulnerable_API:
     type: process
     usage: business
     size: service
@@ -21,11 +23,15 @@ technical_assets:
     confidentiality: confidential
     integrity: critical
     availability: critical
-    data_assets_processed: [Credit_Card]
+    # Aquí también debe ser exacto
+    business_criticality: important
+    data_assets_processed: [Sensitive_Data]
 
 communication_links:
-  HTTPS:
-    target: Web_API
-    source: Web_API
+  Traffic:
+    target: Vulnerable_API
+    source: Vulnerable_API
     protocol: https
+    authentication: none
+    authorization: none
     usage: business

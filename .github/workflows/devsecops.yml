@@ -40,16 +40,16 @@ jobs:
 # --- PASO DE MODELADO DE AMENAZAS (THREAGILE) ---
       - name: Threat Modeling with Threagile
         run: |
-          # 1. Creamos un archivo de configuración mínimo para saltar el validador
-          echo "ignore_orphaned_risk_tracking: true" > server-config.yaml
+          mkdir -p threagile-output
+          # Ejecutamos 'explain' antes de 'analyze' para que el contenedor inicialice su diccionario interno
+          docker run --rm -v "$(pwd)":/app/work -w /app/work threagile/threagile:latest explain || true
           
-          # 2. Ejecutamos Threagile ignorando el error de salida (|| true)
-          # pero forzando a que lea el modelo básico
+          # Ahora el análisis real
           docker run --rm \
             -v "$(pwd)":/app/work \
             -w /app/work \
             threagile/threagile:latest \
-            analyze --model threagile.yaml --output . || true
+            analyze --model threagile.yaml --output threagile-output || true
         continue-on-error: true
 
       # 2. SCA: DEPENDENCY CHECK
