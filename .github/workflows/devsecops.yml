@@ -40,20 +40,18 @@ jobs:
 # --- PASO DE MODELADO DE AMENAZAS (THREAGILE) ---
       - name: Threat Modeling with Threagile
         run: |
-          # 1. Limpieza total
           rm -rf threagile-output
           mkdir -p threagile-output
           chmod 777 threagile-output
           
-          # 2. Ejecutar Threagile. El "|| true" evita que el paso falle si hay warnings de criticidad
+          # Añadimos --verbose para ver el diccionario de valores aceptados
           docker run --rm \
             -v "$(pwd)":/app/work \
             -w /app/work \
             threagile/threagile:latest \
-            analyze --model threagile.yaml --output threagile-output || true
+            analyze --model threagile.yaml --output threagile-output --verbose || true
           
-          # 3. Diagnóstico: Ver qué archivos se generaron realmente
-          echo "Archivos generados en la carpeta de salida:"
+          echo "Contenido de la carpeta de salida:"
           ls -R threagile-output
         continue-on-error: true 
 

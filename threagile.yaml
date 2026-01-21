@@ -3,8 +3,8 @@ project:
   title: Log4Shell Vulnerable API
   owner: Andres Tester
   status: development
-  # Este es el valor que el código fuente de Threagile usa como fallback
-  business_criticality: internal
+  # Probamos con el valor "extensive", que es un estándar en su motor de reglas
+  business_criticality: extensive
 
 data_assets:
   Sensitive_Data:
@@ -23,6 +23,8 @@ technical_assets:
     confidentiality: confidential
     integrity: critical
     availability: critical
+    # Aquí usamos "important" para el activo técnico
+    business_criticality: important
     data_assets_processed: [Sensitive_Data]
 
 communication_links:
