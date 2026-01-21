@@ -30,6 +30,17 @@ jobs:
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
       
+      # 1. OPTIMIZACIÓN: Cache de la base de datos del NIST
+      - name: Cache Dependency Check Data
+        uses: actions/cache@v4
+        with:
+          # Ruta donde se guardan las firmas descargadas
+          path: dependency-check/data
+          # La llave incluye el OS para evitar conflictos
+          key: ${{ runner.os }}-odc-db-v1
+          restore-keys: |
+            ${{ runner.os }}-odc-db-
+
     # 1. ESCANEO DE DEPENDENCIAS (Generando JSON para Sonar)
       - name: Security Dependency Scan (OWASP CLI)
         env:
