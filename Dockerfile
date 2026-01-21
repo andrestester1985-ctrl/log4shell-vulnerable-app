@@ -1,12 +1,12 @@
 # ETAPA 1: Build con Gradle
-FROM gradle:7.3.1-jdk11 AS builder
+FROM gradle:7.3.1-jdk17 AS builder
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 # Compilamos el proyecto (esto genera el archivo .jar)
 RUN gradle bootJar --no-daemon
 
 # ETAPA 2: Runtime (Imagen ligera Java 8)
-FROM openjdk:8u181-jdk-alpine
+FROM openjdk:17-jdk-slim
 EXPOSE 8080
 WORKDIR /app
 # El archivo generado por Gradle se guarda en build/libs/
