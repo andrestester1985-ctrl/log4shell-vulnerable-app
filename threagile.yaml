@@ -1,11 +1,11 @@
 threagile_api_version: 1.0.0
 project:
-  title: Log4Shell Vulnerable API
+  title: Log4Shell API Scan
   owner: Andres Tester
   status: development
 
 data_assets:
-  PCI_Data:
+  Sensitive_Data:
     usage: business
     confidentiality: confidential
     integrity: critical
@@ -21,10 +21,10 @@ technical_assets:
     confidentiality: confidential
     integrity: critical
     availability: critical
-    data_assets_processed: [PCI_Data]
+    data_assets_processed: [Sensitive_Data]
 
 communication_links:
-  HTTPS_Traffic:
+  Internal_Traffic:
     target: Vulnerable_API
     source: Vulnerable_API
     protocol: https

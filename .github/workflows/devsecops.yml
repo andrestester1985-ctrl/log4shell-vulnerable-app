@@ -37,17 +37,15 @@ jobs:
           docker build -t ghcr.io/$REPO:latest .
           docker push ghcr.io/$REPO:latest
 
-# --- PASO DE MODELADO DE AMENAZAS (THREAGILE) ---
+# --- PASO DE MODELADO DE AMENAZAS (THREAGILE 0.9.1) ---
       - name: Threat Modeling with Threagile
         run: |
           mkdir -p threagile-output
-          chmod 777 threagile-output
-          
-          # Apuntamos a la versión inicial estable documentada
+          # Probamos el tag exacto de la versión estable
           docker run --rm \
             -v "$(pwd)":/app/work \
             -w /app/work \
-            threagile/threagile:v0.0.1 \
+            threagile/threagile:0.9.1 \
             analyze --model threagile.yaml --output threagile-output
         continue-on-error: true
 
