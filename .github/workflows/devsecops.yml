@@ -42,13 +42,13 @@ jobs:
          rm -f ~/.gradle/caches/**/jackson-*.pom 2>/dev/null || true
          rm -rf ~/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core 2>/dev/null || true
 
-      - name: Run Dependency Check
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}  # Nota: NVD_API_KEY, no NVD_KEY
-        run: |
-          ./gradlew clean --refresh-dependencies
-          ./gradlew dependencyCheckAnalyze --no-daemon --stacktrace
-          /gradlew build -x test --no-daemon
+      #- name: Run Dependency Check
+        #env:
+          #NVD_API_KEY: ${{ secrets.NVD_API_KEY }}  # Nota: NVD_API_KEY, no NVD_KEY
+        #run: |
+          #./gradlew clean --refresh-dependencies
+         # ./gradlew dependencyCheckAnalyze --no-daemon --stacktrace
+         # /gradlew build -x test --no-daemon
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry

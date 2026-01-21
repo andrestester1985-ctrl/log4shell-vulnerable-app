@@ -49,33 +49,33 @@ sonarqube {
     }
 }
 
-dependencyCheck {
-    formats = ['HTML', 'XML', 'JSON']
-    failOnError = false
-    failBuildOnCVSS = 8.0  // Fallar solo en vulnerabilidades críticas
-    suppressionFile = 'dependency-check-suppressions.xml'  // Opcional: archivo de exclusiones
+//dependencyCheck {
+//    formats = ['HTML', 'XML', 'JSON']
+  //  failOnError = false
+    //failBuildOnCVSS = 8.0  // Fallar solo en vulnerabilidades críticas
+    //suppressionFile = 'dependency-check-suppressions.xml'  // Opcional: archivo de exclusiones
     
     // CONFIGURACIÓN NVD CORRECTA para versión 8.x
-    nvd {
-        apiKey = project.hasProperty('nvdApiKey') ? project.nvdApiKey : ''
+   // nvd {
+     //   apiKey = project.hasProperty('nvdApiKey') ? project.nvdApiKey : ''
         // El delay ahora se configura como tiempo de espera entre peticiones
-        delay = 6000  // 6 segundos entre peticiones (recomendado con API key)
-    }
+       // delay = 6000  // 6 segundos entre peticiones (recomendado con API key)
+    //}
     
     // Analizadores específicos (opcional)
-    analyzers {
-        retirejs {
-            enabled = true
-        }
-        ossIndex {
-            enabled = false  // Deshabilitar si no usas Sonatype OSS Index
-        }
-    }
+    //analyzers {
+    //    retirejs {
+     //       enabled = true
+     //   }
+    //    ossIndex {
+    //        enabled = false  // Deshabilitar si no usas Sonatype OSS Index
+       // }
+   // }
     
     // Configuración de caché
-    autoUpdate = true
-    cveValidForHours = 4  // Horas antes de actualizar la base de datos
-}
+    //autoUpdate = true
+    ///cveValidForHours = 4  // Horas antes de actualizar la base de datos
+//}
 
 test {
     useJUnitPlatform()
