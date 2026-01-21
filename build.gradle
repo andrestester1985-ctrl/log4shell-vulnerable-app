@@ -2,9 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.6.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
-    // Solo activamos SonarCloud
     id "org.sonarqube" version "3.3"
-	// Plugin de OWASP para el escaneo de dependencias
     id "org.owasp.dependencycheck" version "7.4.4"
 }
 
@@ -16,7 +14,7 @@ repositories {
     mavenCentral()
 }
 
-// ESTO SOLUCIONA EL ERROR DEL JAR DE JACKSON
+// 1. Resolución de conflictos de Jackson (Vital para evitar el error de JAR)
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         if (details.requested.group == 'com.fasterxml.jackson.core') {
@@ -32,22 +30,22 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-log4j2:2.6.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
     implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-// Configuración básica de Sonar (sin reportes externos por ahora)
+// 2. Configuración de SonarCloud
 sonarqube {
     properties {
         property "sonar.java.binaries", "build/classes/java/main"
     }
 }
 
-// Configuración básica: genera reporte pero no bloquea si falla el servidor del NIST
-dependencyCheck {
+// 3. Configuración de Dependency Check (Sintaxis compatible v7.4.4)
+// Usamos 'project.extensions.configure' para asegurar que Gradle encuentre el método
+project.extensions.configure(org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension) {
     formats = ['HTML', 'XML']
     failOnError = false
-   nvd {
+    nvd {
         apiKey = System.getProperty('nvdApiKey')
         delay = 4000
     }
