@@ -60,13 +60,25 @@ jobs:
       - name: Start App for DAST
         run: |
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          # 1. Arrancamos el contenedor
           docker run -d -p 8080:8080 --name app-vulnerable ghcr.io/$REPO:latest
           
           echo "Validando API REST en http://localhost:8080/ ..."
-          timeout 90s bash -c 'until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/)" == "200" ]; do 
-            echo "API aún no disponible... reintentando"
+          
+          # 2. Espera con logs en caso de fallo
+          if ! timeout 90s bash -c 'until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/)" == "200" ]; do 
+            echo "Esperando... Status actual: $(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/ || echo "Cerrado")"
             sleep 5
-          done'
+          done'; then
+            echo "❌ ERROR: La API no respondió a tiempo."
+            echo "------------------------------------------"
+            echo "CAPTURA DE LOGS DEL CONTENEDOR:"
+            docker logs app-vulnerable
+            echo "------------------------------------------"
+            echo "ESTADO DEL CONTENEDOR:"
+            docker ps -a
+            exit 1
+          fi
           echo "✅ API REST detectada y funcionando!"
 
       - name: Run ZAP DAST (Manual Scan)
