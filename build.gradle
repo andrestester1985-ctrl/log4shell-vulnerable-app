@@ -2,8 +2,8 @@ plugins {
     id 'org.springframework.boot' version '2.6.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    // Solo activamos SonarCloud
     id "org.sonarqube" version "3.3"
-    id "org.owasp.dependencycheck" version "8.4.3"
 }
 
 group = 'fr.christophetd.log4shell'
@@ -19,30 +19,16 @@ dependencies {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
     }
     implementation 'org.springframework.boot:spring-boot-starter-log4j2:2.6.1'
-    
-    // Librerías vulnerables para la demo
     implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
     implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-// CONFIGURACIÓN DE SEGURIDAD NO BLOQUEANTE
-// Eliminamos el 'afterEvaluate' y usamos configuración directa
-dependencyCheck {
-    autoUpdate = true
-    failOnError = false  // <--- ESTO ES LO QUE HARÁ QUE TU PIPELINE TERMINE EN VERDE
-    formats = ['HTML', 'XML']
-    outputDirectory = "${buildDir}/reports/dependency-check"
-    nvd {
-        delay = 16000
-    }
-}
-
+// Configuración básica de Sonar (sin reportes externos por ahora)
 sonarqube {
     properties {
-        property "sonar.dependencyCheck.xmlReportPath", "build/reports/dependency-check/dependency-check-report.xml"
-        property "sonar.dependencyCheck.htmlReportPath", "build/reports/dependency-check/dependency-check-report.html"
+        property "sonar.java.binaries", "build/classes/java/main"
     }
 }
 

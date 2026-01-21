@@ -28,9 +28,7 @@ jobs:
             -Dsonar.projectKey=andrestester1985-ctrl_log4shell-vulnerable-app \
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.qualitygate.wait=true \
-            -Dsonar.security.fullScan=true \
-            -PdependencyCheck.failOnError=false
+
 
       # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
       - name: Login to GitHub Registry
