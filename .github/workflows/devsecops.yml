@@ -18,77 +18,73 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'  # IMPORTANTE: Habilitar caché de Gradle
+          cache: 'gradle'
 
+      # 1. COMPILAR Y LOGIN (Necesario para tener la imagen lista)
+      - name: Build and Login
+        run: ./gradlew build -x test
 
-      - name: SonarCloud Scan
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Login to GitHub Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Image
         run: |
-          ./gradlew build sonarqube \
-            -Dsonar.projectKey=andrestester1985-ctrl_log4shell-vulnerable-app \
-            -Dsonar.organization=andrestester1985-ctrl \
-            -Dsonar.host.url=https://sonarcloud.io \
-      
-      # 1. OPTIMIZACIÓN: Cache de la base de datos del NIST
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker build -t ghcr.io/$REPO:latest .
+          docker push ghcr.io/$REPO:latest
+
+      # 2. SCA: DEPENDENCY CHECK
       - name: Cache Dependency Check Data
         uses: actions/cache@v4
         with:
-          # Ruta donde se guardan las firmas descargadas
           path: dependency-check/data
-          # La llave incluye el OS para evitar conflictos
           key: ${{ runner.os }}-odc-db-v1
-          restore-keys: |
-            ${{ runner.os }}-odc-db-
 
-    # 1. ESCANEO DE DEPENDENCIAS (Generando JSON para Sonar)
-      - name: Security Dependency Scan (OWASP CLI)
+      - name: Security Dependency Scan
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
           VERSION="12.1.0"
-          # CAMBIO CLAVE: Validamos si existe el BINARIO, no la carpeta de datos
           if [ ! -f "./dependency-check/bin/dependency-check.sh" ]; then
-            echo "Instalando binarios de Dependency Check..."
             curl -sLO https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip
-            unzip -o -q dependency-check-$VERSION-release.zip # -o para sobrescribir si es necesario
+            unzip -o -q dependency-check-$VERSION-release.zip
           fi
           chmod +x ./dependency-check/bin/dependency-check.sh
-          ./dependency-check/bin/dependency-check.sh \
-            --project "Log4Shell-Demo" \
-            --scan "build/libs" \
-            --format "HTML" \
-            --format "JSON" \
-            --out "." \
-            --nvdApiKey "$NVD_API_KEY" \
-            --disableOssIndex \
-            --failOnCVSS 11
+          ./dependency-check/bin/dependency-check.sh --project "Log4Shell-Demo" --scan "build/libs" --format "HTML" --format "JSON" --out "." --nvdApiKey "$NVD_API_KEY" --failOnCVSS 11
 
-      # 1. Levantar la aplicación
-      - name: Start Vulnerable App
+      # 3. DAST: LEVANTAR APP Y ESCANEAR CON ZAP (Comandos directos, no Action)
+      - name: Start App for DAST
         run: |
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker run -d -p 8080:8080 --name app-vulnerable ghcr.io/$REPO:latest
-          # Esperar un poco más para que Spring Boot termine de subir
-          sleep 20
+          echo "Esperando a que la app responda..."
+          timeout 60s bash -c 'until [ "$(curl -s -o /dev/null -w "%{http_code}" localhost:8080/)" == "200" ]; do sleep 5; done'
 
-      # 2. Análisis Dinámico (DAST)
-      - name: ZAP Scan (DAST)
-        uses: zaproxy/action-baseline@v0.12.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target: 'http://localhost:8080/'
-          # Quitamos rules_file_name porque no tenemos el archivo tsv
-          fail_action: false
-          artifact_name: 'zap-scan-report'
+      - name: Run ZAP DAST (Manual Scan)
+        run: |
+          mkdir -p zap-reports
+          chmod 777 zap-reports
+          docker run --rm -v $(pwd)/zap-reports:/zap/wrk/:rw --network="host" \
+            ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+            -t http://localhost:8080/ \
+            -r zap_report.html
+        continue-on-error: true # Esto asegura que el pipe no se detenga aquí
 
-      # 3. Limpiar (Opcional pero recomendado)
-      - name: Stop App
+      # 4. GENERACIÓN DE ARTEFACTOS
+      - name: Upload Scan Reports
+        uses: actions/upload-artifact@v4
         if: always()
-        run: docker stop app-vulnerable && docker rm app-vulnerable
+        with:
+          name: security-reports
+          path: |
+            dependency-check-report.html
+            zap-reports/zap_report.html
 
-      # 2. SONARCLOUD SCAN (Vinculación Directa)
+      # 5. SONARCLOUD (Al final para recoger todo)
       - name: SonarCloud Scan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -98,20 +94,8 @@ jobs:
             -Dsonar.projectKey=andrestester1985-ctrl_log4shell-vulnerable-app \
             -Dsonar.organization=andrestester1985-ctrl \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.dependencyCheck.jsonReportPath=dependency-check-report.json \
-            -Dsonar.dependencyCheck.htmlReportPath=dependency-check-report.html
+            -Dsonar.dependencyCheck.jsonReportPath=dependency-check-report.json
 
-      # 2. LOGIN EN REGISTRY (Solo si pasa el scan)
-      - name: Login to GitHub Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # 3. BUILD Y PUSH
-      - name: Build and Push
-        run: |
-          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          docker build -t ghcr.io/$REPO:latest .
-          docker push ghcr.io/$REPO:latest
+      - name: Stop App
+        if: always()
+        run: docker stop app-vulnerable && docker rm app-vulnerable
